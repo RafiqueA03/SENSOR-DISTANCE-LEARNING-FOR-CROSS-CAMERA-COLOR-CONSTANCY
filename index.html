@@ -424,17 +424,23 @@
     </div>
 
     <script>
-        // Demo data - replace with your actual results
+        // Demo data - using actual images from your GitHub repository
         const demoExamples = {
             example1: {
-                image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZGllbnQxKSIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZkNzAwO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmOTUwMDtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSI+SW5kb29yIFNjZW5lPC90ZXh0Pjwvc3ZnPg==",
-                illuminant: [0.92, 0.85, 0.65],
-                description: "Warm tungsten lighting"
+                imageFile: "visualization/C_5DSR_field3cam_001_sensorname_canon_5dsr.png",
+                jsonFile: "visualization/C_5DSR_field3cam_001_sensorname_canon_5dsr_predicted.json",
+                fallback: {
+                    illuminant: [0.92, 0.85, 0.65],
+                    description: "Warm tungsten lighting"
+                }
             },
             example2: {
-                image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZGllbnQyKSIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojODdDRUVCO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzAwN2ZmZjtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSI+T3V0ZG9vciBTY2VuZTwvdGV4dD48L3N2Zz4=",
-                illuminant: [0.78, 0.82, 0.95],
-                description: "Cool daylight"
+                imageFile: "visualization/C_5DSR_field3cam_002_sensorname_canon_5dsr.png", 
+                jsonFile: "visualization/C_5DSR_field3cam_002_sensorname_canon_5dsr_predicted.json",
+                fallback: {
+                    illuminant: [0.78, 0.82, 0.95],
+                    description: "Cool daylight"
+                }
             }
         };
 
@@ -517,7 +523,7 @@
             document.getElementById('correctedResult').style.display = 'none';
         }
 
-        function loadExample(exampleId) {
+        async function loadExample(exampleId) {
             currentExample = exampleId;
             const example = demoExamples[exampleId];
             
@@ -525,30 +531,95 @@
             document.querySelectorAll('.demo-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('loadExample' + (exampleId === 'example1' ? '1' : '2')).classList.add('active');
             
-            // Load example image
-            document.getElementById('demoImage').src = example.image;
-            
             resetSteps();
             
-            // Start processing
-            setTimeout(() => {
-                processExample(example);
-            }, 500);
+            try {
+                // Try to load actual image from GitHub
+                console.log(`Loading image: ${example.imageFile}`);
+                const imageResponse = await fetch(example.imageFile);
+                
+                if (imageResponse.ok) {
+                    const imageBlob = await imageResponse.blob();
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    document.getElementById('demoImage').src = imageUrl;
+                    
+                    // Try to load corresponding JSON data
+                    try {
+                        console.log(`Loading JSON: ${example.jsonFile}`);
+                        const jsonResponse = await fetch(example.jsonFile);
+                        if (jsonResponse.ok) {
+                            const jsonData = await jsonResponse.json();
+                            const illuminantData = parseIlluminantData(jsonData, example.imageFile);
+                            setTimeout(() => {
+                                processExampleWithData(illuminantData || example.fallback);
+                            }, 500);
+                        } else {
+                            // Use fallback data if JSON not found
+                            console.log('JSON not found, using fallback data');
+                            setTimeout(() => {
+                                processExampleWithData(example.fallback);
+                            }, 500);
+                        }
+                    } catch (jsonError) {
+                        console.log('Error loading JSON, using fallback:', jsonError);
+                        setTimeout(() => {
+                            processExampleWithData(example.fallback);
+                        }, 500);
+                    }
+                } else {
+                    console.log(`Could not load image ${example.imageFile}, using placeholder`);
+                    // Keep the placeholder if image not found
+                    setTimeout(() => {
+                        processExampleWithData(example.fallback);
+                    }, 500);
+                }
+            } catch (error) {
+                console.log('Error loading example files:', error);
+                // Use fallback data
+                setTimeout(() => {
+                    processExampleWithData(example.fallback);
+                }, 500);
+            }
         }
 
-        function processExample(example) {
+        function processExampleWithData(exampleData) {
             // Activate step 2
             document.getElementById('step2').classList.add('active');
             document.getElementById('processing2').style.display = 'block';
 
             setTimeout(() => {
                 estimatedIlluminant = {
-                    rgb: example.illuminant,
-                    cct: estimateCCT(example.illuminant),
-                    description: example.description
+                    rgb: exampleData.illuminant,
+                    cct: estimateCCT(exampleData.illuminant),
+                    description: exampleData.description || getIlluminantDescription(exampleData.illuminant)
                 };
                 displayIlluminantResult();
             }, 2000);
+        }
+
+        function parseIlluminantData(jsonData, filename) {
+            // Extract RGB values from your predicted JSON
+            let rgbValues;
+            if (jsonData.predicted_illuminant) {
+                rgbValues = jsonData.predicted_illuminant;
+            } else if (jsonData.illuminant) {
+                rgbValues = jsonData.illuminant;
+            } else if (Array.isArray(jsonData) && jsonData.length >= 3) {
+                rgbValues = jsonData.slice(0, 3);
+            } else {
+                console.log('Could not find illuminant data in JSON structure:', jsonData);
+                return null;
+            }
+            
+            // Ensure RGB values are normalized to [0,1]
+            if (rgbValues.some(val => val > 1)) {
+                rgbValues = rgbValues.map(val => val / 255.0);
+            }
+            
+            return {
+                illuminant: rgbValues,
+                description: getIlluminantDescription(rgbValues) + " (C5 Network Prediction)"
+            };
         }
 
         function displayIlluminantResult() {
