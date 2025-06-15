@@ -60,6 +60,35 @@
             margin-top: 10px;
         }
 
+        .demo-controls {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .demo-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-btn.active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
         .workflow {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -117,7 +146,106 @@
             align-items: center;
         }
 
-        /* Step 1: Upload */
+        .demo-image {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .illuminant-display {
+            text-align: center;
+        }
+
+        .illuminant-swatch {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #f0f0f0;
+        }
+
+        .illuminant-values {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .illuminant-description {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .correction-info {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #2d5a2d;
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .method-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .method-section h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .method-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .method-item h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
         .upload-area {
             width: 100%;
             height: 250px;
@@ -158,118 +286,6 @@
             display: none;
         }
 
-        .uploaded-image {
-            max-width: 100%;
-            max-height: 250px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Step 2: Illuminant */
-        .illuminant-display {
-            text-align: center;
-        }
-
-        .illuminant-swatch {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            border: 5px solid white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            background: #f0f0f0;
-        }
-
-        .illuminant-values {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .illuminant-description {
-            margin-top: 10px;
-            font-style: italic;
-            color: #666;
-        }
-
-        /* Step 3: Corrected */
-        .corrected-image {
-            max-width: 100%;
-            max-height: 250px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .correction-info {
-            background: #e8f5e8;
-            border: 1px solid #c3e6c3;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 0.9em;
-            color: #2d5a2d;
-        }
-
-        /* Processing indicator */
-        .processing {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Method explanation */
-        .method-section {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-top: 30px;
-        }
-
-        .method-section h3 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .method-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .method-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .method-item h4 {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        /* Download button */
         .download-btn {
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
@@ -288,7 +304,6 @@
             box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
         }
 
-        /* Responsive design */
         @media (max-width: 768px) {
             .workflow {
                 grid-template-columns: 1fr;
@@ -298,18 +313,6 @@
             .method-grid {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Demo note */
-        .demo-note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 0.9em;
         }
     </style>
 </head>
@@ -322,9 +325,15 @@
                 <p>Three-step illuminant estimation and von Kries color correction</p>
             </div>
             <div class="paper-info">
-                Supplementary Material for ICIP25 Paper<br>
-                
+                Supplementary Material for ICIP25 Paper
             </div>
+        </div>
+
+        <div class="demo-controls">
+            <h3>🎬 Interactive Demo</h3>
+            <p>Choose your demo mode:</p>
+            <button class="demo-btn active" id="demoMode">Pre-loaded Examples</button>
+            <button class="demo-btn" id="uploadMode">Upload Your Own</button>
         </div>
 
         <div class="workflow">
@@ -333,17 +342,20 @@
                 <div class="step-number">1</div>
                 <div class="step-title">Input Image</div>
                 <div class="step-content">
-                    <div class="upload-area" id="uploadArea">
+                    <div id="demoImageContainer">
+                        <img class="demo-image" id="demoImage" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkZGQiLz4KPHN2ZyB4PSIxMDAiIHk9Ijc1IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjOTk5Ij4KICA8cGF0aCBkPSJNMTAgMTBMMzAgMzBNMzAgMTBMMTAgMzAiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHRleHQgeD0iNDAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPkltYWdlPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+" alt="Demo Image">
+                        <div style="margin-top: 15px;">
+                            <button class="demo-btn" id="loadExample1">Example 1: Indoor Scene</button>
+                            <button class="demo-btn" id="loadExample2">Example 2: Outdoor Scene</button>
+                        </div>
+                    </div>
+                    
+                    <div class="upload-area" id="uploadArea" style="display: none;">
                         <div class="upload-icon">📷</div>
                         <div class="upload-text">Upload Image</div>
                         <div class="upload-subtext">Click or drag & drop</div>
                     </div>
                     <input type="file" id="imageInput" accept="image/*">
-                    <input type="file" id="jsonInput" accept=".json" style="display: none;">
-                    <img id="uploadedImage" class="uploaded-image" style="display: none;" alt="Uploaded image">
-                    <button id="jsonUploadBtn" style="display: none; margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                        Upload Matching JSON
-                    </button>
                 </div>
             </div>
 
@@ -377,7 +389,7 @@
                         <p>Applying correction...</p>
                     </div>
                     <div id="correctedResult" style="display: none;">
-                        <canvas id="correctedCanvas" class="corrected-image"></canvas>
+                        <canvas id="correctedCanvas" class="demo-image"></canvas>
                         <div class="correction-info">
                             <strong>von Kries Chromatic Adaptation</strong><br>
                             Diagonal transform applied to normalize illuminant
@@ -396,7 +408,7 @@
                     <p>Convert RGB to log-chroma space and compute 128×128 histogram with UV coordinate channels for robust illuminant estimation.</p>
                 </div>
                 <div class="method-item">
-                    <h4>🔥Colorcontrastive Network</h4>
+                    <h4>🔥 Contrastive Network</h4>
                     <p>Multi-encoder convolutional cross-correlation network trained using our novel color metric and Siamese approach processes histograms to estimate illuminant UV coordinates.</p>
                 </div>
                 <div class="method-item">
@@ -409,75 +421,35 @@
                 </div>
             </div>
         </div>
-
-        <div class="demo-note">
-            <!-- <strong>📁 Folder Structure:</strong> 
-            <p style="margin-bottom: 10px;">Place your files in the following structure:</p>
-            <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; text-align: left; font-size: 0.85em;">
-project_folder/
-├── index.html (this interactive tool)
-└── visualization/
-    ├── C_5DSR_field3cam_001_sensorname_canon_5dsr.png
-    ├── C_5DSR_field3cam_001_sensorname_canon_5dsr_gt.json
-    ├── C_5DSR_field3cam_001_sensorname_canon_5dsr_predicted.json
-    ├── [other image files...]
-    ├── [other _gt.json files...]
-    └── [other _predicted.json files...] -->
-            </pre>
-            
-            <p><strong>Usage:</strong></p>
-            <ol style="text-align: left; display: inline-block; margin: 0;">
-                <li>Upload any image from your visualization folder</li>
-                <li>Upload corresponding predicted illuminant from contrastivenet: *_predicted.json file</li>
-                <li>Applies von Kries color correction</li>
-            </ol>
-            
-            
-            <!-- <details style="margin-top: 15px;"> -->
-                <!-- <summary style="cursor: pointer; font-weight: bold;">📋 Expected JSON Format (Click to expand)</summary>
-                <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; text-align: left; font-size: 0.85em;">
-// Example: C_5DSR_field3cam_001_sensorname_canon_5dsr_predicted.json
-{
-    "predicted_illuminant": [0.85, 0.92, 0.78],
-    "filename": "C_5DSR_field3cam_001_sensorname_canon_5dsr.png",
-    "model": "C5_Network"
-}
-
-// Alternative formats also supported:
-{
-    "illuminant": [0.85, 0.92, 0.78]
-}
-
-// Or simple array:
-[0.85, 0.92, 0.78]
-                </pre> -->
-            </details>
-        </div>
     </div>
 
     <script>
-        let uploadedImageData = null;
+        // Demo data - replace with your actual results
+        const demoExamples = {
+            example1: {
+                image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZGllbnQxKSIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZkNzAwO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmOTUwMDtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSI+SW5kb29yIFNjZW5lPC90ZXh0Pjwvc3ZnPg==",
+                illuminant: [0.92, 0.85, 0.65],
+                description: "Warm tungsten lighting"
+            },
+            example2: {
+                image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZGllbnQyKSIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojODdDRUVCO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzAwN2ZmZjtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSI+T3V0ZG9vciBTY2VuZTwvdGV4dD48L3N2Zz4=",
+                illuminant: [0.78, 0.82, 0.95],
+                description: "Cool daylight"
+            }
+        };
+
+        let currentMode = 'demo';
+        let currentExample = 'example1';
         let estimatedIlluminant = null;
 
-        // Utility functions first
-        function getUploadedFileName() {
-            const fileInput = document.getElementById('imageInput');
-            if (fileInput.files && fileInput.files[0]) {
-                return fileInput.files[0].name;
-            }
-            return '';
-        }
-
         function estimateCCT(rgb) {
-            // Estimate correlated color temperature from RGB
             const [r, g, b] = rgb;
             const sum = r + g + b;
-            if (sum === 0) return 5000; // Default fallback
+            if (sum === 0) return 5000;
             
             const chromaticity_x = r / sum;
             const chromaticity_y = g / sum;
             
-            // McCamy's formula approximation
             const n = (chromaticity_x - 0.3320) / (0.1858 - chromaticity_y);
             const cct = 449 * n**3 + 3525 * n**2 + 6823.3 * n + 5520.33;
             
@@ -494,33 +466,35 @@ project_folder/
             else return "Cool daylight/overcast sky";
         }
 
-        // Initialize event listeners
         document.addEventListener('DOMContentLoaded', function() {
+            // Mode switching
+            document.getElementById('demoMode').addEventListener('click', function() {
+                currentMode = 'demo';
+                this.classList.add('active');
+                document.getElementById('uploadMode').classList.remove('active');
+                document.getElementById('demoImageContainer').style.display = 'block';
+                document.getElementById('uploadArea').style.display = 'none';
+                resetSteps();
+            });
+
+            document.getElementById('uploadMode').addEventListener('click', function() {
+                currentMode = 'upload';
+                this.classList.add('active');
+                document.getElementById('demoMode').classList.remove('active');
+                document.getElementById('demoImageContainer').style.display = 'none';
+                document.getElementById('uploadArea').style.display = 'flex';
+                resetSteps();
+            });
+
+            // Example buttons
+            document.getElementById('loadExample1').addEventListener('click', () => loadExample('example1'));
+            document.getElementById('loadExample2').addEventListener('click', () => loadExample('example2'));
+
+            // Upload functionality
             const uploadArea = document.getElementById('uploadArea');
             const imageInput = document.getElementById('imageInput');
 
-            // Upload area click
             uploadArea.addEventListener('click', () => imageInput.click());
-
-            // Drag and drop
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) {
-                    handleImageUpload(e.dataTransfer.files[0]);
-                }
-            });
-
-            // File input change
             imageInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
                     handleImageUpload(e.target.files[0]);
@@ -530,215 +504,56 @@ project_folder/
             // Download button
             document.getElementById('downloadBtn').addEventListener('click', downloadCorrectedImage);
 
-            // JSON upload button
-            document.getElementById('jsonUploadBtn').addEventListener('click', () => {
-                document.getElementById('jsonInput').click();
-            });
-
-            // JSON file input
-            document.getElementById('jsonInput').addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleJsonUpload(e.target.files[0]);
-                }
-            });
+            // Start with first example
+            loadExample('example1');
         });
 
-        function handleImageUpload(file) {
-            if (!file.type.startsWith('image/')) {
-                alert('Please upload a valid image file.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                uploadedImageData = e.target.result;
-                displayUploadedImage(uploadedImageData);
-                processImage();
-            };
-            reader.readAsDataURL(file);
+        function resetSteps() {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('processing2').style.display = 'none';
+            document.getElementById('processing3').style.display = 'none';
+            document.getElementById('illuminantResult').style.display = 'none';
+            document.getElementById('correctedResult').style.display = 'none';
         }
 
-        function displayUploadedImage(imageSrc) {
-            const uploadArea = document.getElementById('uploadArea');
-            const uploadedImage = document.getElementById('uploadedImage');
+        function loadExample(exampleId) {
+            currentExample = exampleId;
+            const example = demoExamples[exampleId];
             
-            uploadArea.style.display = 'none';
-            uploadedImage.src = imageSrc;
-            uploadedImage.style.display = 'block';
+            // Update example buttons
+            document.querySelectorAll('.demo-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('loadExample' + (exampleId === 'example1' ? '1' : '2')).classList.add('active');
             
-            // Activate step 1
-            document.getElementById('step1').classList.add('active');
+            // Load example image
+            document.getElementById('demoImage').src = example.image;
+            
+            resetSteps();
+            
+            // Start processing
+            setTimeout(() => {
+                processExample(example);
+            }, 500);
         }
 
-        function processImage() {
-            // Start step 2 processing
+        function processExample(example) {
+            // Activate step 2
             document.getElementById('step2').classList.add('active');
             document.getElementById('processing2').style.display = 'block';
 
-            // Simulate illuminant estimation
             setTimeout(() => {
-                estimateIlluminant();
-            }, 1500);
-        }
-
-        function estimateIlluminant() {
-            // Hide processing indicator
-            document.getElementById('processing2').style.display = 'none';
-            
-            // Try to load real illuminant data from your test results
-            loadIlluminantFromResults()
-                .then(illuminant => {
-                    if (illuminant) {
-                        estimatedIlluminant = illuminant;
-                        displayIlluminantResult();
-                    } else {
-                        // Fallback to simulation if no results found
-                        useSimulatedIlluminant();
-                    }
-                })
-                .catch(() => {
-                    // Fallback to simulation if loading fails
-                    useSimulatedIlluminant();
-                });
-        }
-
-        async function loadIlluminantFromResults() {
-            try {
-                const uploadedFileName = getUploadedFileName();
-                if (!uploadedFileName) return null;
-                
-                // Extract base filename without extension
-                const baseName = uploadedFileName.replace(/\.(png|jpg|jpeg)$/i, '');
-                
-                // Construct the predicted JSON filename
-                const predictedJsonPath = `visualization/${baseName}_predicted.json`;
-                
-                console.log(`Looking for predicted results at: ${predictedJsonPath}`);
-                
-                const response = await fetch(predictedJsonPath);
-                
-                if (response.ok) {
-                    const predictedData = await response.json();
-                    console.log('Loaded predicted data:', predictedData);
-                    
-                    return parseIlluminantData(predictedData, baseName);
-                } else {
-                    console.log(`Could not fetch ${predictedJsonPath}: ${response.status}`);
-                    console.log('💡 Tip: Make sure you\'re running a local web server or upload the JSON file manually');
-                    
-                    // Show manual upload option
-                    document.getElementById('jsonUploadBtn').style.display = 'block';
-                    return null;
-                }
-                
-            } catch (error) {
-                console.log('Error loading prediction results:', error);
-                console.log('💡 Tip: Try running a local web server (e.g., python -m http.server) or upload the JSON manually');
-                
-                // Show manual upload option
-                document.getElementById('jsonUploadBtn').style.display = 'block';
-                return null;
-            }
-        }
-
-        function parseIlluminantData(predictedData, baseName) {
-            // Extract RGB values from your predicted JSON
-            let rgbValues;
-            if (predictedData.predicted_illuminant) {
-                rgbValues = predictedData.predicted_illuminant;
-            } else if (predictedData.illuminant) {
-                rgbValues = predictedData.illuminant;
-            } else if (Array.isArray(predictedData) && predictedData.length >= 3) {
-                rgbValues = predictedData.slice(0, 3);
-            } else {
-                console.log('Could not find illuminant data in JSON structure:', predictedData);
-                return null;
-            }
-            
-            // Ensure RGB values are normalized to [0,1]
-            if (rgbValues.some(val => val > 1)) {
-                rgbValues = rgbValues.map(val => val / 255.0);
-            }
-            
-            return {
-                rgb: rgbValues,
-                cct: estimateCCT(rgbValues),
-                description: getIlluminantDescription(rgbValues),
-                source: "C5 Network Prediction",
-                filename: baseName
-            };
-        }
-
-        function handleJsonUpload(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const jsonData = JSON.parse(e.target.result);
-                    console.log('Manually uploaded JSON data:', jsonData);
-                    
-                    const illuminantData = parseIlluminantData(jsonData, file.name);
-                    if (illuminantData) {
-                        estimatedIlluminant = illuminantData;
-                        estimatedIlluminant.source = "Manual JSON Upload";
-                        
-                        // Hide the upload button and show results
-                        document.getElementById('jsonUploadBtn').style.display = 'none';
-                        document.getElementById('processing2').style.display = 'none';
-                        displayIlluminantResult();
-                    } else {
-                        alert('Could not parse illuminant data from JSON file');
-                    }
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                    alert('Invalid JSON file');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function handleImageUpload(file) {
-            if (!file.type.startsWith('image/')) {
-                alert('Please upload a valid image file.');
-                return;
-            }
-
-            // Check if the filename matches expected pattern
-            const expectedPattern = /.*_sensorname_.*\.(png|jpg|jpeg)$/i;
-            if (!expectedPattern.test(file.name)) {
-                console.warn('Filename does not match expected pattern. Results may not be found.');
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                uploadedImageData = e.target.result;
-                displayUploadedImage(uploadedImageData);
-                processImage();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function displayUploadedImage(imageSrc) {
-            const uploadArea = document.getElementById('uploadArea');
-            const uploadedImage = document.getElementById('uploadedImage');
-            
-            uploadArea.style.display = 'none';
-            uploadedImage.src = imageSrc;
-            uploadedImage.style.display = 'block';
-            
-            // Show the uploaded filename
-            const fileName = getUploadedFileName();
-            if (fileName) {
-                const fileDisplay = document.createElement('div');
-                fileDisplay.style.cssText = 'margin-top: 10px; font-size: 0.9em; color: #666; text-align: center;';
-                fileDisplay.textContent = `File: ${fileName}`;
-                uploadedImage.parentNode.appendChild(fileDisplay);
-            }
-            
-            // Activate step 1
-            document.getElementById('step1').classList.add('active');
+                estimatedIlluminant = {
+                    rgb: example.illuminant,
+                    cct: estimateCCT(example.illuminant),
+                    description: example.description
+                };
+                displayIlluminantResult();
+            }, 2000);
         }
 
         function displayIlluminantResult() {
+            document.getElementById('processing2').style.display = 'none';
+            
             const illuminantSwatch = document.getElementById('illuminantSwatch');
             const illuminantValues = document.getElementById('illuminantValues');
             const illuminantDesc = document.getElementById('illuminantDesc');
@@ -746,7 +561,6 @@ project_folder/
             const rgbColor = `rgb(${Math.round(estimatedIlluminant.rgb[0] * 255)}, ${Math.round(estimatedIlluminant.rgb[1] * 255)}, ${Math.round(estimatedIlluminant.rgb[2] * 255)})`;
             illuminantSwatch.style.backgroundColor = rgbColor;
             
-            // Clean display without extra info
             illuminantValues.innerHTML = `
                 RGB: (${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)})<br>
                 CCT: ${estimatedIlluminant.cct} K
@@ -756,82 +570,101 @@ project_folder/
             
             document.getElementById('illuminantResult').style.display = 'block';
             
-            // Start color correction
             setTimeout(() => {
                 applyVonKriesCorrection();
-            }, 1000);
+            }, 1500);
         }
 
         function applyVonKriesCorrection() {
-            // Start step 3 processing
             document.getElementById('step3').classList.add('active');
             document.getElementById('processing3').style.display = 'block';
 
-            // Load the uploaded image for processing
-            const img = new Image();
-            img.onload = function() {
-                // Simulate processing time
-                setTimeout(() => {
-                    performVonKriesCorrection(img);
-                }, 1500);
-            };
-            img.src = uploadedImageData;
+            setTimeout(() => {
+                if (currentMode === 'demo') {
+                    createCorrectedDemo();
+                } else {
+                    // Handle uploaded image correction
+                    performVonKriesCorrection();
+                }
+            }, 2000);
         }
 
-        function performVonKriesCorrection(img) {
+        function createCorrectedDemo() {
             const canvas = document.getElementById('correctedCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Set canvas size to match image
-            canvas.width = img.width;
-            canvas.height = img.height;
+            canvas.width = 300;
+            canvas.height = 200;
             
-            // Draw original image
-            ctx.drawImage(img, 0, 0);
-            
-            // Get image data
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-            
-            // von Kries chromatic adaptation
-            const illR = estimatedIlluminant.rgb[0];
-            const illG = estimatedIlluminant.rgb[1];
-            const illB = estimatedIlluminant.rgb[2];
-            
-            // Diagonal transform matrix (simplified von Kries)
-            const adaptR = 1.0 / illR;
-            const adaptG = 1.0 / illG;
-            const adaptB = 1.0 / illB;
-            
-            // Apply correction to each pixel
-            for (let i = 0; i < data.length; i += 4) {
-                // Normalize to [0,1]
-                let r = data[i] / 255.0;
-                let g = data[i + 1] / 255.0;
-                let b = data[i + 2] / 255.0;
-                
-                // Apply von Kries adaptation
-                r = Math.min(1.0, r * adaptR);
-                g = Math.min(1.0, g * adaptG);
-                b = Math.min(1.0, b * adaptB);
-                
-                // Gamma correction (optional)
-                r = Math.pow(r, 1.0 / 2.2);
-                g = Math.pow(g, 1.0 / 2.2);
-                b = Math.pow(b, 1.0 / 2.2);
-                
-                // Convert back to [0,255]
-                data[i] = Math.round(r * 255);
-                data[i + 1] = Math.round(g * 255);
-                data[i + 2] = Math.round(b * 255);
+            // Create a corrected version visualization
+            const gradient = ctx.createLinearGradient(0, 0, 300, 200);
+            if (currentExample === 'example1') {
+                gradient.addColorStop(0, '#fff8dc'); // Corrected warm to neutral
+                gradient.addColorStop(1, '#f0f8ff');
+            } else {
+                gradient.addColorStop(0, '#f0f8ff'); // Corrected cool to neutral
+                gradient.addColorStop(1, '#fff8dc');
             }
             
-            // Put corrected image data back
-            ctx.putImageData(imageData, 0, 0);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 300, 200);
             
-            // Hide processing and show result
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Color Corrected', 150, 100);
+            ctx.font = '12px Arial';
+            ctx.fillText('(Simulated Result)', 150, 120);
+            
             document.getElementById('processing3').style.display = 'none';
             document.getElementById('correctedResult').style.display = 'block';
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+        }
+
+        function handleImageUpload(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload a valid image file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = Math.min(300, img.width);
+                    canvas.height = Math.min(200, img.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    document.getElementById('demoImage').src = canvas.toDataURL();
+                    processUploadedImage(img);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function processUploadedImage(img) {
+            resetSteps();
+            
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('processing2').style.display = 'block';
+
+            setTimeout(() => {
+                // Simulate illuminant estimation for uploaded images
+                estimatedIlluminant = {
+                    rgb: [0.85, 0.88, 0.82], // Simulated result
+                    cct: estimateCCT([0.85, 0.88, 0.82]),
+                    description: "Estimated illuminant (simulated)"
+                };
+                displayIlluminantResult();
+            }, 2000);
+        }
+
+        function performVonKriesCorrection() {
+            // This would be the real correction for uploaded images
+            createCorrectedDemo(); // Using demo version for now
         }
 
         function downloadCorrectedImage() {
