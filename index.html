@@ -369,6 +369,16 @@
             box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
         }
 
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .workflow {
                 grid-template-columns: 1fr;
@@ -396,6 +406,11 @@
             <div class="paper-info">
                 Supplementary Material for ICIP25 Paper
             </div>
+        </div>
+
+        <div class="demo-controls">
+            <button class="demo-btn active" id="demoMode">Demo Images</button>
+            <button class="demo-btn" id="uploadMode">Upload Image</button>
         </div>
 
         <div class="workflow">
@@ -494,22 +509,33 @@
         let estimatedIlluminant = null;
         let availableImages = [];
 
-        // Common image extensions to look for
-        const imageExtensions = ['.png', '.jpg', '.jpeg', '.bmp', '.tiff'];
-        
-        // Potential image filenames based on your naming pattern
-        const potentialImages = [
-            'C_5DSR_field3cam_001_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_002_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_003_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_004_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_005_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_006_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_007_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_008_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_009_sensorname_canon_5dsr',
-            'C_5DSR_field3cam_010_sensorname_canon_5dsr',
-            // Add more potential filenames as needed
+        // CORS doesn't allow HEAD requests to non-existent files in most browsers
+        // Better approach: define known available images or use proper server endpoint
+        const knownImages = [
+            {
+                imageFile: 'https://picsum.photos/300/200?random=1',
+                jsonData: { illuminant: [0.92, 0.85, 0.65] },
+                displayName: 'Indoor Scene 1',
+                baseName: 'scene1'
+            },
+            {
+                imageFile: 'https://picsum.photos/300/200?random=2', 
+                jsonData: { illuminant: [0.78, 0.82, 0.95] },
+                displayName: 'Outdoor Scene 2',
+                baseName: 'scene2'
+            },
+            {
+                imageFile: 'https://picsum.photos/300/200?random=3',
+                jsonData: { illuminant: [0.88, 0.90, 0.75] },
+                displayName: 'Mixed Lighting 3',
+                baseName: 'scene3'
+            },
+            {
+                imageFile: 'https://picsum.photos/300/200?random=4',
+                jsonData: { illuminant: [0.70, 0.75, 0.88] },
+                displayName: 'Fluorescent 4',
+                baseName: 'scene4'
+            }
         ];
 
         function estimateCCT(rgb) {
@@ -536,56 +562,56 @@
             else return "Cool daylight/overcast sky";
         }
 
+        // Check if image exists by trying to load it
+        function checkImageExists(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
+            });
+        }
+
         async function discoverAvailableImages() {
             console.log('Discovering available images...');
             const imageGrid = document.getElementById('imageGrid');
             const loadingMessage = document.getElementById('loadingImages');
             
             availableImages = [];
-            
-            // Try to find available images
-            for (const baseName of potentialImages) {
-                for (const ext of imageExtensions) {
-                    const imageFile = `visualization/${baseName}${ext}`;
-                    const jsonFile = `visualization/${baseName}_predicted.json`;
+
+            // For demo purposes, let's try to load from your original paths first
+            const originalPaths = [
+                'visualization/C_5DSR_field3cam_001_sensorname_canon_5dsr.png',
+                'visualization/C_5DSR_field3cam_002_sensorname_canon_5dsr.jpg',
+                'visualization/C_5DSR_field3cam_003_sensorname_canon_5dsr.png'
+            ];
+
+            // Check original paths first
+            for (let i = 0; i < originalPaths.length; i++) {
+                const imagePath = originalPaths[i];
+                const exists = await checkImageExists(imagePath);
+                
+                if (exists) {
+                    const baseName = imagePath.split('/').pop().split('.')[0];
+                    const jsonPath = `visualization/${baseName}_predicted.json`;
                     
-                    try {
-                        const response = await fetch(imageFile, { method: 'HEAD' });
-                        if (response.ok) {
-                            console.log(`Found image: ${imageFile}`);
-                            availableImages.push({
-                                imageFile: imageFile,
-                                jsonFile: jsonFile,
-                                baseName: baseName,
-                                displayName: baseName.replace(/^C_5DSR_field3cam_(\d+)_sensorname_canon_5dsr$/, 'Scene $1')
-                            });
-                            break; // Found this image, move to next baseName
-                        }
-                    } catch (error) {
-                        // Image not found, continue searching
-                    }
+                    availableImages.push({
+                        imageFile: imagePath,
+                        jsonFile: jsonPath,
+                        baseName: baseName,
+                        displayName: `Scene ${i + 1}`,
+                        isOriginal: true
+                    });
                 }
             }
 
-            // If no images found, add some fallback examples
+            // If no original images found, use demo images
             if (availableImages.length === 0) {
-                console.log('No images found, using fallback examples');
-                availableImages = [
-                    {
-                        imageFile: null,
-                        jsonFile: null,
-                        baseName: 'example1',
-                        displayName: 'Example Scene 1',
-                        fallback: { illuminant: [0.92, 0.85, 0.65], description: "Warm tungsten lighting" }
-                    },
-                    {
-                        imageFile: null,
-                        jsonFile: null,
-                        baseName: 'example2',
-                        displayName: 'Example Scene 2',
-                        fallback: { illuminant: [0.78, 0.82, 0.95], description: "Cool daylight" }
-                    }
-                ];
+                console.log('No original images found, using demo images');
+                availableImages = knownImages.map((img, index) => ({
+                    ...img,
+                    isOriginal: false
+                }));
             }
 
             // Display the images
@@ -600,16 +626,11 @@
                 imageOption.dataset.baseName = imageInfo.baseName;
                 
                 const img = document.createElement('img');
-                if (imageInfo.imageFile) {
-                    img.src = imageInfo.imageFile;
-                    img.onerror = () => {
-                        // If image fails to load, use placeholder
-                        img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2RkZCIvPgo8dGV4dCB4PSIxMDAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pgo8L3N2Zz4=";
-                    };
-                } else {
-                    // Use placeholder for fallback examples
+                img.src = imageInfo.imageFile;
+                img.onerror = () => {
+                    // If image fails to load, use placeholder
                     img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2RkZCIvPgo8dGV4dCB4PSIxMDAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pgo8L3N2Zz4=";
-                }
+                };
                 
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'image-name';
@@ -627,7 +648,7 @@
             if (availableImages.length > 0) {
                 const firstOption = imageGrid.querySelector('.image-option');
                 if (firstOption) {
-                    firstOption.click();
+                    setTimeout(() => firstOption.click(), 100);
                 }
             }
         }
@@ -664,7 +685,7 @@
             let illuminantData = null;
 
             // Try to load JSON data if available
-            if (imageInfo.jsonFile) {
+            if (imageInfo.jsonFile && imageInfo.isOriginal) {
                 try {
                     console.log(`Loading JSON: ${imageInfo.jsonFile}`);
                     const jsonResponse = await fetch(imageInfo.jsonFile);
@@ -681,13 +702,16 @@
                 }
             }
 
-            // Use fallback data if JSON not available
-            if (!illuminantData && imageInfo.fallback) {
-                illuminantData = imageInfo.fallback;
-                console.log('Using fallback data:', illuminantData);
+            // Use embedded JSON data for demo images
+            if (!illuminantData && imageInfo.jsonData) {
+                illuminantData = {
+                    illuminant: imageInfo.jsonData.illuminant,
+                    description: getIlluminantDescription(imageInfo.jsonData.illuminant) + " (Demo Data)"
+                };
+                console.log('Using embedded JSON data:', illuminantData);
             }
 
-            // Use default if nothing else available
+            // Use fallback data if nothing else available
             if (!illuminantData) {
                 illuminantData = {
                     illuminant: [0.85, 0.88, 0.82],
