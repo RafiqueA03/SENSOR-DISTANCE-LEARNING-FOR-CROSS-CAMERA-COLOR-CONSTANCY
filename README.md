@@ -51,7 +51,10 @@ Check out our [interactive visualization](https://icip25crosscameracolorconstanc
 
 ## 🤝 Contact
 
-*[Add contact information if desired]*
+For questions about this work, please reach out:
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rafique-a-982a77188/)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rafique.ahmed@univ-st-etienne.fr)
 
 ---
 
