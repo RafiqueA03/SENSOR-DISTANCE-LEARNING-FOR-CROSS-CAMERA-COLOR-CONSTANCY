@@ -677,7 +677,11 @@
                     const jsonResponse = await fetch(imageInfo.jsonFile);
                     if (jsonResponse.ok) {
                         const jsonData = await jsonResponse.json();
+                        console.log('JSON data loaded:', jsonData);
                         illuminantData = parseIlluminantData(jsonData, imageInfo.imageFile);
+                        console.log('Parsed illuminant data:', illuminantData);
+                    } else {
+                        console.log(`JSON fetch failed with status: ${jsonResponse.status}`);
                     }
                 } catch (error) {
                     console.log('Error loading JSON:', error);
@@ -687,14 +691,16 @@
             // Use fallback data if JSON not available
             if (!illuminantData && imageInfo.fallback) {
                 illuminantData = imageInfo.fallback;
+                console.log('Using fallback data:', illuminantData);
             }
 
             // Use default if nothing else available
             if (!illuminantData) {
                 illuminantData = {
                     illuminant: [0.85, 0.88, 0.82],
-                    description: "Estimated illuminant"
+                    description: "Estimated illuminant (default)"
                 };
+                console.log('Using default data:', illuminantData);
             }
 
             setTimeout(() => {
@@ -703,26 +709,56 @@
                     cct: estimateCCT(illuminantData.illuminant),
                     description: illuminantData.description || getIlluminantDescription(illuminantData.illuminant)
                 };
+                console.log('Final estimated illuminant:', estimatedIlluminant);
                 displayIlluminantResult();
             }, 2000);
         }
 
         function parseIlluminantData(jsonData, filename) {
+            console.log('Parsing JSON data:', jsonData);
+            
             let rgbValues;
+            
+            // Try different possible JSON structures
             if (jsonData.predicted_illuminant) {
                 rgbValues = jsonData.predicted_illuminant;
+                console.log('Found predicted_illuminant:', rgbValues);
             } else if (jsonData.illuminant) {
                 rgbValues = jsonData.illuminant;
+                console.log('Found illuminant:', rgbValues);
+            } else if (jsonData.estimated_illuminant) {
+                rgbValues = jsonData.estimated_illuminant;
+                console.log('Found estimated_illuminant:', rgbValues);
+            } else if (jsonData.rgb) {
+                rgbValues = jsonData.rgb;
+                console.log('Found rgb:', rgbValues);
             } else if (Array.isArray(jsonData) && jsonData.length >= 3) {
                 rgbValues = jsonData.slice(0, 3);
-            } else {
-                console.log('Could not find illuminant data in JSON structure:', jsonData);
+                console.log('Found array data:', rgbValues);
+            } else if (typeof jsonData === 'object') {
+                // Try to find any array with 3 elements in the object
+                for (const [key, value] of Object.entries(jsonData)) {
+                    if (Array.isArray(value) && value.length >= 3 && 
+                        value.every(v => typeof v === 'number')) {
+                        rgbValues = value.slice(0, 3);
+                        console.log(`Found RGB values in key "${key}":`, rgbValues);
+                        break;
+                    }
+                }
+            }
+            
+            if (!rgbValues) {
+                console.log('Could not find illuminant data in JSON structure. Available keys:', Object.keys(jsonData));
                 return null;
             }
             
+            // Ensure RGB values are normalized to [0,1]
             if (rgbValues.some(val => val > 1)) {
+                console.log('Normalizing RGB values from 0-255 to 0-1');
                 rgbValues = rgbValues.map(val => val / 255.0);
             }
+            
+            console.log('Final RGB values:', rgbValues);
             
             return {
                 illuminant: rgbValues,
@@ -806,8 +842,137 @@
             document.getElementById('processing3').style.display = 'block';
 
             setTimeout(() => {
-                createCorrectedDemo();
+                if (currentMode === 'demo') {
+                    performRealColorCorrection();
+                } else {
+                    performUploadedImageCorrection();
+                }
             }, 2000);
+        }
+
+        async function performRealColorCorrection() {
+            const canvas = document.getElementById('correctedCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            try {
+                // Load the original image
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = selectedImageFile || document.getElementById('demoImage').src;
+                });
+
+                // Set canvas size to match image
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Draw original image
+                ctx.drawImage(img, 0, 0);
+                
+                // Get image data
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // Apply von Kries chromatic adaptation
+                const correctedData = applyVonKriesTransform(data, estimatedIlluminant.rgb);
+                
+                // Create new image data with corrected colors
+                const correctedImageData = new ImageData(correctedData, canvas.width, canvas.height);
+                ctx.putImageData(correctedImageData, 0, 0);
+                
+                console.log('Color correction applied successfully');
+                
+            } catch (error) {
+                console.log('Error applying color correction:', error);
+                // Fallback to demo visualization
+                createCorrectedDemo();
+                return;
+            }
+            
+            document.getElementById('processing3').style.display = 'none';
+            document.getElementById('correctedResult').style.display = 'block';
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+        }
+
+        function applyVonKriesTransform(imageData, estimatedIlluminant) {
+            // Reference white (D65)
+            const referenceWhite = [0.95047, 1.0, 1.08883];
+            
+            // Normalize the estimated illuminant
+            const illum = [...estimatedIlluminant];
+            const illumSum = illum[0] + illum[1] + illum[2];
+            if (illumSum > 0) {
+                illum[0] /= illumSum;
+                illum[1] /= illumSum;  
+                illum[2] /= illumSum;
+            }
+            
+            // Convert to XYZ (simplified conversion)
+            const illumXYZ = [
+                illum[0] * 0.4124 + illum[1] * 0.3576 + illum[2] * 0.1805,
+                illum[0] * 0.2126 + illum[1] * 0.7152 + illum[2] * 0.0722,
+                illum[0] * 0.0193 + illum[1] * 0.1192 + illum[2] * 0.9505
+            ];
+            
+            // von Kries adaptation matrix (simplified diagonal transform)
+            const adaptationFactors = [
+                referenceWhite[0] / Math.max(illumXYZ[0], 0.001),
+                referenceWhite[1] / Math.max(illumXYZ[1], 0.001),
+                referenceWhite[2] / Math.max(illumXYZ[2], 0.001)
+            ];
+            
+            // Limit adaptation factors to reasonable range
+            adaptationFactors[0] = Math.max(0.1, Math.min(10, adaptationFactors[0]));
+            adaptationFactors[1] = Math.max(0.1, Math.min(10, adaptationFactors[1]));
+            adaptationFactors[2] = Math.max(0.1, Math.min(10, adaptationFactors[2]));
+            
+            console.log('Adaptation factors:', adaptationFactors);
+            
+            // Apply correction to each pixel
+            const correctedData = new Uint8ClampedArray(imageData.length);
+            
+            for (let i = 0; i < imageData.length; i += 4) {
+                // Get original RGB values (0-255)
+                let r = imageData[i] / 255.0;
+                let g = imageData[i + 1] / 255.0;
+                let b = imageData[i + 2] / 255.0;
+                
+                // Convert to XYZ
+                let x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+                let y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+                let z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+                
+                // Apply von Kries adaptation
+                x *= adaptationFactors[0];
+                y *= adaptationFactors[1];
+                z *= adaptationFactors[2];
+                
+                // Convert back to RGB
+                r = x * 3.2406 + y * -1.5372 + z * -0.4986;
+                g = x * -0.9689 + y * 1.8758 + z * 0.0415;
+                b = x * 0.0557 + y * -0.2040 + z * 1.0570;
+                
+                // Gamma correction and clamp to [0,1]
+                r = Math.max(0, Math.min(1, r > 0.0031308 ? 1.055 * Math.pow(r, 1/2.4) - 0.055 : 12.92 * r));
+                g = Math.max(0, Math.min(1, g > 0.0031308 ? 1.055 * Math.pow(g, 1/2.4) - 0.055 : 12.92 * g));
+                b = Math.max(0, Math.min(1, b > 0.0031308 ? 1.055 * Math.pow(b, 1/2.4) - 0.055 : 12.92 * b));
+                
+                // Convert back to 0-255 range
+                correctedData[i] = Math.round(r * 255);
+                correctedData[i + 1] = Math.round(g * 255);
+                correctedData[i + 2] = Math.round(b * 255);
+                correctedData[i + 3] = imageData[i + 3]; // Keep alpha channel
+            }
+            
+            return correctedData;
+        }
+
+        function performUploadedImageCorrection() {
+            // For uploaded images, we'll perform the same real correction
+            performRealColorCorrection();
         }
 
         function createCorrectedDemo() {
@@ -873,6 +1038,9 @@
             
             document.getElementById('step2').classList.add('active');
             document.getElementById('processing2').style.display = 'block';
+
+            // Store the uploaded image for correction
+            selectedImageFile = document.getElementById('demoImage').src;
 
             setTimeout(() => {
                 estimatedIlluminant = {
