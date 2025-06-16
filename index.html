@@ -408,10 +408,7 @@
             </div>
         </div>
 
-        <div class="demo-controls">
-            <button class="demo-btn active" id="demoMode">Demo Images</button>
-            <button class="demo-btn" id="uploadMode">Upload Image</button>
-        </div>
+
 
         <div class="workflow">
             <!-- Step 1: Input Image -->
@@ -419,22 +416,13 @@
                 <div class="step-number">1</div>
                 <div class="step-title">Input Image</div>
                 <div class="step-content">
-                    <div id="demoImageContainer">
-                        <img class="demo-image" id="demoImage" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkZGQiLz4KPHN2ZyB4PSIxMDAiIHk9Ijc1IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjOTk5Ij4KICA8cGF0aCBkPSJNMTAgMTBMMzAgMzBNMzAgMTBMMTAgMzAiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHRleHQgeD0iNDAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPkltYWdlPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+" alt="Demo Image">
-                        
-                        <div class="image-selector" id="imageSelector">
-                            <h4>📸 Select an Image:</h4>
-                            <div class="loading-message" id="loadingImages">Loading available images...</div>
-                            <div class="image-grid" id="imageGrid" style="display: none;"></div>
-                        </div>
-                    </div>
+                    <img class="demo-image" id="demoImage" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkZGQiLz4KPHN2ZyB4PSIxMDAiIHk9Ijc1IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjOTk5Ij4KICA8cGF0aCBkPSJNMTAgMTBMMzAgMzBNMzAgMTBMMTAgMzAiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHRleHQgeD0iNDAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPkltYWdlPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+" alt="Demo Image">
                     
-                    <div class="upload-area" id="uploadArea" style="display: none;">
-                        <div class="upload-icon">📷</div>
-                        <div class="upload-text">Upload Image</div>
-                        <div class="upload-subtext">Click or drag & drop</div>
+                    <div class="image-selector" id="imageSelector">
+                        <h4>📸 Select an Image:</h4>
+                        <div class="loading-message" id="loadingImages">Loading available images from GitHub...</div>
+                        <div class="image-grid" id="imageGrid" style="display: none;"></div>
                     </div>
-                    <input type="file" id="imageInput" accept="image/*">
                 </div>
             </div>
 
@@ -503,40 +491,35 @@
     </div>
 
     <script>
-        let currentMode = 'demo';
         let selectedImageFile = null;
         let selectedJsonFile = null;
         let estimatedIlluminant = null;
         let availableImages = [];
 
-        // CORS doesn't allow HEAD requests to non-existent files in most browsers
-        // Better approach: define known available images or use proper server endpoint
-        const knownImages = [
-            {
-                imageFile: 'https://picsum.photos/300/200?random=1',
-                jsonData: { illuminant: [0.92, 0.85, 0.65] },
-                displayName: 'Indoor Scene 1',
-                baseName: 'scene1'
-            },
-            {
-                imageFile: 'https://picsum.photos/300/200?random=2', 
-                jsonData: { illuminant: [0.78, 0.82, 0.95] },
-                displayName: 'Outdoor Scene 2',
-                baseName: 'scene2'
-            },
-            {
-                imageFile: 'https://picsum.photos/300/200?random=3',
-                jsonData: { illuminant: [0.88, 0.90, 0.75] },
-                displayName: 'Mixed Lighting 3',
-                baseName: 'scene3'
-            },
-            {
-                imageFile: 'https://picsum.photos/300/200?random=4',
-                jsonData: { illuminant: [0.70, 0.75, 0.88] },
-                displayName: 'Fluorescent 4',
-                baseName: 'scene4'
-            }
+        // GitHub repository configuration
+        const GITHUB_BASE_URL = 'https://raw.githubusercontent.com';
+        const REPO_OWNER = 'your-username'; // Replace with actual GitHub username
+        const REPO_NAME = 'your-repo-name'; // Replace with actual repository name
+        const BRANCH = 'main'; // or 'master' depending on your default branch
+        const IMAGES_PATH = 'visualization'; // Path to images in the repo
+
+        // Known image files (update these based on your actual GitHub repo)
+        const knownImageFiles = [
+            'C_5DSR_field3cam_001_sensorname_canon_5dsr.png',
+            'C_5DSR_field3cam_002_sensorname_canon_5dsr.jpg',
+            'C_5DSR_field3cam_003_sensorname_canon_5dsr.png',
+            'C_5DSR_field3cam_004_sensorname_canon_5dsr.jpg',
+            'C_5DSR_field3cam_005_sensorname_canon_5dsr.png',
+            'C_5DSR_field3cam_006_sensorname_canon_5dsr.jpg',
+            'C_5DSR_field3cam_007_sensorname_canon_5dsr.png',
+            'C_5DSR_field3cam_008_sensorname_canon_5dsr.jpg',
+            'C_5DSR_field3cam_009_sensorname_canon_5dsr.png',
+            'C_5DSR_field3cam_010_sensorname_canon_5dsr.jpg'
         ];
+
+        function buildGitHubUrl(filename) {
+            return `${GITHUB_BASE_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGES_PATH}/${filename}`;
+        }
 
         function estimateCCT(rgb) {
             const [r, g, b] = rgb;
@@ -573,47 +556,53 @@
         }
 
         async function discoverAvailableImages() {
-            console.log('Discovering available images...');
+            console.log('Discovering available images from GitHub...');
             const imageGrid = document.getElementById('imageGrid');
             const loadingMessage = document.getElementById('loadingImages');
             
             availableImages = [];
 
-            // For demo purposes, let's try to load from your original paths first
-            const originalPaths = [
-                'visualization/C_5DSR_field3cam_001_sensorname_canon_5dsr.png',
-                'visualization/C_5DSR_field3cam_002_sensorname_canon_5dsr.jpg',
-                'visualization/C_5DSR_field3cam_003_sensorname_canon_5dsr.png'
-            ];
-
-            // Check original paths first
-            for (let i = 0; i < originalPaths.length; i++) {
-                const imagePath = originalPaths[i];
-                const exists = await checkImageExists(imagePath);
+            // Try to load images from GitHub
+            for (const filename of knownImageFiles) {
+                const imageUrl = buildGitHubUrl(filename);
+                const baseName = filename.split('.')[0];
+                const jsonUrl = buildGitHubUrl(`${baseName}_predicted.json`);
+                
+                console.log(`Checking image: ${imageUrl}`);
+                
+                const exists = await checkImageExists(imageUrl);
                 
                 if (exists) {
-                    const baseName = imagePath.split('/').pop().split('.')[0];
-                    const jsonPath = `visualization/${baseName}_predicted.json`;
-                    
+                    console.log(`✓ Found image: ${filename}`);
                     availableImages.push({
-                        imageFile: imagePath,
-                        jsonFile: jsonPath,
+                        imageFile: imageUrl,
+                        jsonFile: jsonUrl,
                         baseName: baseName,
-                        displayName: `Scene ${i + 1}`,
-                        isOriginal: true
+                        displayName: filename.replace(/^C_5DSR_field3cam_(\d+)_sensorname_canon_5dsr\.(png|jpg)$/, 'Scene $1'),
+                        isGitHub: true,
+                        filename: filename
                     });
+                } else {
+                    console.log(`✗ Image not found: ${filename}`);
                 }
             }
 
-            // If no original images found, use demo images
+            // Display results
             if (availableImages.length === 0) {
-                console.log('No original images found, using demo images');
-                availableImages = knownImages.map((img, index) => ({
-                    ...img,
-                    isOriginal: false
-                }));
+                loadingMessage.innerHTML = `
+                    <div class="error-message">
+                        <strong>No images found in GitHub repository.</strong><br>
+                        Please check that:<br>
+                        • Repository URL is correct<br>
+                        • Images exist in the '${IMAGES_PATH}' folder<br>
+                        • Repository is public or properly configured
+                    </div>
+                `;
+                return;
             }
 
+            console.log(`Found ${availableImages.length} images from GitHub`);
+            
             // Display the images
             loadingMessage.style.display = 'none';
             imageGrid.style.display = 'grid';
@@ -621,15 +610,16 @@
             for (const imageInfo of availableImages) {
                 const imageOption = document.createElement('div');
                 imageOption.className = 'image-option';
-                imageOption.dataset.imageFile = imageInfo.imageFile || '';
-                imageOption.dataset.jsonFile = imageInfo.jsonFile || '';
+                imageOption.dataset.imageFile = imageInfo.imageFile;
+                imageOption.dataset.jsonFile = imageInfo.jsonFile;
                 imageOption.dataset.baseName = imageInfo.baseName;
                 
                 const img = document.createElement('img');
                 img.src = imageInfo.imageFile;
+                img.loading = 'lazy';
                 img.onerror = () => {
-                    // If image fails to load, use placeholder
-                    img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2RkZCIvPgo8dGV4dCB4PSIxMDAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pgo8L3N2Zz4=";
+                    console.log(`Failed to load image: ${imageInfo.imageFile}`);
+                    img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2RkZCIvPgo8dGV4dCB4PSIxMDAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkVycm9yPC90ZXh0Pgo8L3N2Zz4=";
                 };
                 
                 const nameDiv = document.createElement('div');
@@ -648,7 +638,7 @@
             if (availableImages.length > 0) {
                 const firstOption = imageGrid.querySelector('.image-option');
                 if (firstOption) {
-                    setTimeout(() => firstOption.click(), 100);
+                    setTimeout(() => firstOption.click(), 500);
                 }
             }
         }
@@ -684,38 +674,29 @@
 
             let illuminantData = null;
 
-            // Try to load JSON data if available
-            if (imageInfo.jsonFile && imageInfo.isOriginal) {
+            // Try to load JSON data from GitHub
+            if (imageInfo.jsonFile && imageInfo.isGitHub) {
                 try {
-                    console.log(`Loading JSON: ${imageInfo.jsonFile}`);
+                    console.log(`Loading JSON from GitHub: ${imageInfo.jsonFile}`);
                     const jsonResponse = await fetch(imageInfo.jsonFile);
                     if (jsonResponse.ok) {
                         const jsonData = await jsonResponse.json();
-                        console.log('JSON data loaded:', jsonData);
+                        console.log('JSON data loaded from GitHub:', jsonData);
                         illuminantData = parseIlluminantData(jsonData, imageInfo.imageFile);
                         console.log('Parsed illuminant data:', illuminantData);
                     } else {
                         console.log(`JSON fetch failed with status: ${jsonResponse.status}`);
                     }
                 } catch (error) {
-                    console.log('Error loading JSON:', error);
+                    console.log('Error loading JSON from GitHub:', error);
                 }
             }
 
-            // Use embedded JSON data for demo images
-            if (!illuminantData && imageInfo.jsonData) {
-                illuminantData = {
-                    illuminant: imageInfo.jsonData.illuminant,
-                    description: getIlluminantDescription(imageInfo.jsonData.illuminant) + " (Demo Data)"
-                };
-                console.log('Using embedded JSON data:', illuminantData);
-            }
-
-            // Use fallback data if nothing else available
+            // Use fallback data if JSON not available
             if (!illuminantData) {
                 illuminantData = {
                     illuminant: [0.85, 0.88, 0.82],
-                    description: "Estimated illuminant (default)"
+                    description: "Estimated illuminant (default - JSON not found)"
                 };
                 console.log('Using default data:', illuminantData);
             }
@@ -784,41 +765,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Mode switching
-            document.getElementById('demoMode').addEventListener('click', function() {
-                currentMode = 'demo';
-                this.classList.add('active');
-                document.getElementById('uploadMode').classList.remove('active');
-                document.getElementById('demoImageContainer').style.display = 'block';
-                document.getElementById('uploadArea').style.display = 'none';
-                resetSteps();
-            });
-
-            document.getElementById('uploadMode').addEventListener('click', function() {
-                currentMode = 'upload';
-                this.classList.add('active');
-                document.getElementById('demoMode').classList.remove('active');
-                document.getElementById('demoImageContainer').style.display = 'none';
-                document.getElementById('uploadArea').style.display = 'flex';
-                resetSteps();
-            });
-
-            // Upload functionality
-            const uploadArea = document.getElementById('uploadArea');
-            const imageInput = document.getElementById('imageInput');
-
-            uploadArea.addEventListener('click', () => imageInput.click());
-            imageInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleImageUpload(e.target.files[0]);
-                }
-            });
+            // Discover and load available images from GitHub
+            discoverAvailableImages();
 
             // Download button
             document.getElementById('downloadBtn').addEventListener('click', downloadCorrectedImage);
-
-            // Discover and load available images
-            discoverAvailableImages();
         });
 
         function resetSteps() {
@@ -859,11 +810,7 @@
             document.getElementById('processing3').style.display = 'block';
 
             setTimeout(() => {
-                if (currentMode === 'demo') {
-                    performRealColorCorrection();
-                } else {
-                    performUploadedImageCorrection();
-                }
+                performRealColorCorrection();
             }, 2000);
         }
 
@@ -985,88 +932,6 @@
             }
             
             return correctedData;
-        }
-
-        function performUploadedImageCorrection() {
-            // For uploaded images, we'll perform the same real correction
-            performRealColorCorrection();
-        }
-
-        function createCorrectedDemo() {
-            const canvas = document.getElementById('correctedCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = 300;
-            canvas.height = 200;
-            
-            // Create a corrected version visualization
-            const gradient = ctx.createLinearGradient(0, 0, 300, 200);
-            const cct = estimatedIlluminant.cct;
-            
-            if (cct < 4000) {
-                gradient.addColorStop(0, '#fff8dc'); // Corrected warm to neutral
-                gradient.addColorStop(1, '#f0f8ff');
-            } else {
-                gradient.addColorStop(0, '#f0f8ff'); // Corrected cool to neutral
-                gradient.addColorStop(1, '#fff8dc');
-            }
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 300, 200);
-            
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.font = '16px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('Color Corrected', 150, 100);
-            ctx.font = '12px Arial';
-            ctx.fillText('(von Kries Transform)', 150, 120);
-            
-            document.getElementById('processing3').style.display = 'none';
-            document.getElementById('correctedResult').style.display = 'block';
-            document.getElementById('downloadBtn').style.display = 'inline-block';
-        }
-
-        function handleImageUpload(file) {
-            if (!file.type.startsWith('image/')) {
-                alert('Please upload a valid image file.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = Math.min(300, img.width);
-                    canvas.height = Math.min(200, img.height);
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    document.getElementById('demoImage').src = canvas.toDataURL();
-                    processUploadedImage(img);
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function processUploadedImage(img) {
-            resetSteps();
-            
-            document.getElementById('step2').classList.add('active');
-            document.getElementById('processing2').style.display = 'block';
-
-            // Store the uploaded image for correction
-            selectedImageFile = document.getElementById('demoImage').src;
-
-            setTimeout(() => {
-                estimatedIlluminant = {
-                    rgb: [0.85, 0.88, 0.82],
-                    cct: estimateCCT([0.85, 0.88, 0.82]),
-                    description: "Estimated illuminant (simulated)"
-                };
-                displayIlluminantResult();
-            }, 2000);
         }
 
         function downloadCorrectedImage() {
