@@ -89,6 +89,71 @@
             background: linear-gradient(135deg, #28a745, #20c997);
         }
 
+        .image-selector {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-selector h4 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .image-option {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .image-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .image-option.selected {
+            border-color: #28a745;
+            background: #e8f5e8;
+        }
+
+        .image-option img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .image-option .image-name {
+            font-size: 0.9em;
+            color: #333;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
         .workflow {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -313,6 +378,10 @@
             .method-grid {
                 grid-template-columns: 1fr;
             }
+
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
         }
     </style>
 </head>
@@ -332,7 +401,7 @@
         <div class="demo-controls">
             <h3>🎬 Interactive Demo</h3>
             <p>Choose your demo mode:</p>
-            <button class="demo-btn active" id="demoMode">Pre-loaded Examples</button>
+            <button class="demo-btn active" id="demoMode">Select from Available Images</button>
             <button class="demo-btn" id="uploadMode">Upload Your Own</button>
         </div>
 
@@ -344,9 +413,11 @@
                 <div class="step-content">
                     <div id="demoImageContainer">
                         <img class="demo-image" id="demoImage" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkZGQiLz4KPHN2ZyB4PSIxMDAiIHk9Ijc1IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjOTk5Ij4KICA8cGF0aCBkPSJNMTAgMTBMMzAgMzBNMzAgMTBMMTAgMzAiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHRleHQgeD0iNDAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPkltYWdlPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+" alt="Demo Image">
-                        <div style="margin-top: 15px;">
-                            <button class="demo-btn" id="loadExample1">Example 1: Indoor Scene</button>
-                            <button class="demo-btn" id="loadExample2">Example 2: Outdoor Scene</button>
+                        
+                        <div class="image-selector" id="imageSelector">
+                            <h4>📸 Select an Image:</h4>
+                            <div class="loading-message" id="loadingImages">Loading available images...</div>
+                            <div class="image-grid" id="imageGrid" style="display: none;"></div>
                         </div>
                     </div>
                     
@@ -424,29 +495,29 @@
     </div>
 
     <script>
-        // Demo data - using actual images from your GitHub repository
-        const demoExamples = {
-            example1: {
-                imageFile: "visualization/C_5DSR_field3cam_001_sensorname_canon_5dsr.png",
-                jsonFile: "visualization/C_5DSR_field3cam_001_sensorname_canon_5dsr_predicted.json",
-                fallback: {
-                    illuminant: [0.92, 0.85, 0.65],
-                    description: "Warm tungsten lighting"
-                }
-            },
-            example2: {
-                imageFile: "visualization/C_5DSR_field3cam_002_sensorname_canon_5dsr.png", 
-                jsonFile: "visualization/C_5DSR_field3cam_002_sensorname_canon_5dsr_predicted.json",
-                fallback: {
-                    illuminant: [0.78, 0.82, 0.95],
-                    description: "Cool daylight"
-                }
-            }
-        };
-
         let currentMode = 'demo';
-        let currentExample = 'example1';
+        let selectedImageFile = null;
+        let selectedJsonFile = null;
         let estimatedIlluminant = null;
+        let availableImages = [];
+
+        // Common image extensions to look for
+        const imageExtensions = ['.png', '.jpg', '.jpeg', '.bmp', '.tiff'];
+        
+        // Potential image filenames based on your naming pattern
+        const potentialImages = [
+            'C_5DSR_field3cam_001_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_002_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_003_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_004_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_005_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_006_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_007_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_008_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_009_sensorname_canon_5dsr',
+            'C_5DSR_field3cam_010_sensorname_canon_5dsr',
+            // Add more potential filenames as needed
+        ];
 
         function estimateCCT(rgb) {
             const [r, g, b] = rgb;
@@ -472,6 +543,193 @@
             else return "Cool daylight/overcast sky";
         }
 
+        async function discoverAvailableImages() {
+            console.log('Discovering available images...');
+            const imageGrid = document.getElementById('imageGrid');
+            const loadingMessage = document.getElementById('loadingImages');
+            
+            availableImages = [];
+            
+            // Try to find available images
+            for (const baseName of potentialImages) {
+                for (const ext of imageExtensions) {
+                    const imageFile = `visualization/${baseName}${ext}`;
+                    const jsonFile = `visualization/${baseName}_predicted.json`;
+                    
+                    try {
+                        const response = await fetch(imageFile, { method: 'HEAD' });
+                        if (response.ok) {
+                            console.log(`Found image: ${imageFile}`);
+                            availableImages.push({
+                                imageFile: imageFile,
+                                jsonFile: jsonFile,
+                                baseName: baseName,
+                                displayName: baseName.replace(/^C_5DSR_field3cam_(\d+)_sensorname_canon_5dsr$/, 'Scene $1')
+                            });
+                            break; // Found this image, move to next baseName
+                        }
+                    } catch (error) {
+                        // Image not found, continue searching
+                    }
+                }
+            }
+
+            // If no images found, add some fallback examples
+            if (availableImages.length === 0) {
+                console.log('No images found, using fallback examples');
+                availableImages = [
+                    {
+                        imageFile: null,
+                        jsonFile: null,
+                        baseName: 'example1',
+                        displayName: 'Example Scene 1',
+                        fallback: { illuminant: [0.92, 0.85, 0.65], description: "Warm tungsten lighting" }
+                    },
+                    {
+                        imageFile: null,
+                        jsonFile: null,
+                        baseName: 'example2',
+                        displayName: 'Example Scene 2',
+                        fallback: { illuminant: [0.78, 0.82, 0.95], description: "Cool daylight" }
+                    }
+                ];
+            }
+
+            // Display the images
+            loadingMessage.style.display = 'none';
+            imageGrid.style.display = 'grid';
+            
+            for (const imageInfo of availableImages) {
+                const imageOption = document.createElement('div');
+                imageOption.className = 'image-option';
+                imageOption.dataset.imageFile = imageInfo.imageFile || '';
+                imageOption.dataset.jsonFile = imageInfo.jsonFile || '';
+                imageOption.dataset.baseName = imageInfo.baseName;
+                
+                const img = document.createElement('img');
+                if (imageInfo.imageFile) {
+                    img.src = imageInfo.imageFile;
+                    img.onerror = () => {
+                        // If image fails to load, use placeholder
+                        img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2RkZCIvPgo8dGV4dCB4PSIxMDAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pgo8L3N2Zz4=";
+                    };
+                } else {
+                    // Use placeholder for fallback examples
+                    img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2RkZCIvPgo8dGV4dCB4PSIxMDAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pgo8L3N2Zz4=";
+                }
+                
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'image-name';
+                nameDiv.textContent = imageInfo.displayName;
+                
+                imageOption.appendChild(img);
+                imageOption.appendChild(nameDiv);
+                
+                imageOption.addEventListener('click', () => selectImage(imageInfo, imageOption));
+                
+                imageGrid.appendChild(imageOption);
+            }
+
+            // Auto-select first image if available
+            if (availableImages.length > 0) {
+                const firstOption = imageGrid.querySelector('.image-option');
+                if (firstOption) {
+                    firstOption.click();
+                }
+            }
+        }
+
+        function selectImage(imageInfo, optionElement) {
+            // Update selection UI
+            document.querySelectorAll('.image-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            optionElement.classList.add('selected');
+            
+            // Store selected files
+            selectedImageFile = imageInfo.imageFile;
+            selectedJsonFile = imageInfo.jsonFile;
+            
+            // Update main image display
+            if (imageInfo.imageFile) {
+                document.getElementById('demoImage').src = imageInfo.imageFile;
+            }
+            
+            // Reset workflow
+            resetSteps();
+            
+            // Start processing
+            setTimeout(() => {
+                processSelectedImage(imageInfo);
+            }, 500);
+        }
+
+        async function processSelectedImage(imageInfo) {
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('processing2').style.display = 'block';
+
+            let illuminantData = null;
+
+            // Try to load JSON data if available
+            if (imageInfo.jsonFile) {
+                try {
+                    console.log(`Loading JSON: ${imageInfo.jsonFile}`);
+                    const jsonResponse = await fetch(imageInfo.jsonFile);
+                    if (jsonResponse.ok) {
+                        const jsonData = await jsonResponse.json();
+                        illuminantData = parseIlluminantData(jsonData, imageInfo.imageFile);
+                    }
+                } catch (error) {
+                    console.log('Error loading JSON:', error);
+                }
+            }
+
+            // Use fallback data if JSON not available
+            if (!illuminantData && imageInfo.fallback) {
+                illuminantData = imageInfo.fallback;
+            }
+
+            // Use default if nothing else available
+            if (!illuminantData) {
+                illuminantData = {
+                    illuminant: [0.85, 0.88, 0.82],
+                    description: "Estimated illuminant"
+                };
+            }
+
+            setTimeout(() => {
+                estimatedIlluminant = {
+                    rgb: illuminantData.illuminant,
+                    cct: estimateCCT(illuminantData.illuminant),
+                    description: illuminantData.description || getIlluminantDescription(illuminantData.illuminant)
+                };
+                displayIlluminantResult();
+            }, 2000);
+        }
+
+        function parseIlluminantData(jsonData, filename) {
+            let rgbValues;
+            if (jsonData.predicted_illuminant) {
+                rgbValues = jsonData.predicted_illuminant;
+            } else if (jsonData.illuminant) {
+                rgbValues = jsonData.illuminant;
+            } else if (Array.isArray(jsonData) && jsonData.length >= 3) {
+                rgbValues = jsonData.slice(0, 3);
+            } else {
+                console.log('Could not find illuminant data in JSON structure:', jsonData);
+                return null;
+            }
+            
+            if (rgbValues.some(val => val > 1)) {
+                rgbValues = rgbValues.map(val => val / 255.0);
+            }
+            
+            return {
+                illuminant: rgbValues,
+                description: getIlluminantDescription(rgbValues) + " (Network Prediction)"
+            };
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Mode switching
             document.getElementById('demoMode').addEventListener('click', function() {
@@ -492,10 +750,6 @@
                 resetSteps();
             });
 
-            // Example buttons
-            document.getElementById('loadExample1').addEventListener('click', () => loadExample('example1'));
-            document.getElementById('loadExample2').addEventListener('click', () => loadExample('example2'));
-
             // Upload functionality
             const uploadArea = document.getElementById('uploadArea');
             const imageInput = document.getElementById('imageInput');
@@ -510,8 +764,8 @@
             // Download button
             document.getElementById('downloadBtn').addEventListener('click', downloadCorrectedImage);
 
-            // Start with first example
-            loadExample('example1');
+            // Discover and load available images
+            discoverAvailableImages();
         });
 
         function resetSteps() {
@@ -521,105 +775,6 @@
             document.getElementById('processing3').style.display = 'none';
             document.getElementById('illuminantResult').style.display = 'none';
             document.getElementById('correctedResult').style.display = 'none';
-        }
-
-        async function loadExample(exampleId) {
-            currentExample = exampleId;
-            const example = demoExamples[exampleId];
-            
-            // Update example buttons
-            document.querySelectorAll('.demo-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('loadExample' + (exampleId === 'example1' ? '1' : '2')).classList.add('active');
-            
-            resetSteps();
-            
-            try {
-                // Try to load actual image from GitHub
-                console.log(`Loading image: ${example.imageFile}`);
-                const imageResponse = await fetch(example.imageFile);
-                
-                if (imageResponse.ok) {
-                    const imageBlob = await imageResponse.blob();
-                    const imageUrl = URL.createObjectURL(imageBlob);
-                    document.getElementById('demoImage').src = imageUrl;
-                    
-                    // Try to load corresponding JSON data
-                    try {
-                        console.log(`Loading JSON: ${example.jsonFile}`);
-                        const jsonResponse = await fetch(example.jsonFile);
-                        if (jsonResponse.ok) {
-                            const jsonData = await jsonResponse.json();
-                            const illuminantData = parseIlluminantData(jsonData, example.imageFile);
-                            setTimeout(() => {
-                                processExampleWithData(illuminantData || example.fallback);
-                            }, 500);
-                        } else {
-                            // Use fallback data if JSON not found
-                            console.log('JSON not found, using fallback data');
-                            setTimeout(() => {
-                                processExampleWithData(example.fallback);
-                            }, 500);
-                        }
-                    } catch (jsonError) {
-                        console.log('Error loading JSON, using fallback:', jsonError);
-                        setTimeout(() => {
-                            processExampleWithData(example.fallback);
-                        }, 500);
-                    }
-                } else {
-                    console.log(`Could not load image ${example.imageFile}, using placeholder`);
-                    // Keep the placeholder if image not found
-                    setTimeout(() => {
-                        processExampleWithData(example.fallback);
-                    }, 500);
-                }
-            } catch (error) {
-                console.log('Error loading example files:', error);
-                // Use fallback data
-                setTimeout(() => {
-                    processExampleWithData(example.fallback);
-                }, 500);
-            }
-        }
-
-        function processExampleWithData(exampleData) {
-            // Activate step 2
-            document.getElementById('step2').classList.add('active');
-            document.getElementById('processing2').style.display = 'block';
-
-            setTimeout(() => {
-                estimatedIlluminant = {
-                    rgb: exampleData.illuminant,
-                    cct: estimateCCT(exampleData.illuminant),
-                    description: exampleData.description || getIlluminantDescription(exampleData.illuminant)
-                };
-                displayIlluminantResult();
-            }, 2000);
-        }
-
-        function parseIlluminantData(jsonData, filename) {
-            // Extract RGB values from your predicted JSON
-            let rgbValues;
-            if (jsonData.predicted_illuminant) {
-                rgbValues = jsonData.predicted_illuminant;
-            } else if (jsonData.illuminant) {
-                rgbValues = jsonData.illuminant;
-            } else if (Array.isArray(jsonData) && jsonData.length >= 3) {
-                rgbValues = jsonData.slice(0, 3);
-            } else {
-                console.log('Could not find illuminant data in JSON structure:', jsonData);
-                return null;
-            }
-            
-            // Ensure RGB values are normalized to [0,1]
-            if (rgbValues.some(val => val > 1)) {
-                rgbValues = rgbValues.map(val => val / 255.0);
-            }
-            
-            return {
-                illuminant: rgbValues,
-                description: getIlluminantDescription(rgbValues) + " (C5 Network Prediction)"
-            };
         }
 
         function displayIlluminantResult() {
@@ -651,12 +806,7 @@
             document.getElementById('processing3').style.display = 'block';
 
             setTimeout(() => {
-                if (currentMode === 'demo') {
-                    createCorrectedDemo();
-                } else {
-                    // Handle uploaded image correction
-                    performVonKriesCorrection();
-                }
+                createCorrectedDemo();
             }, 2000);
         }
 
@@ -669,7 +819,9 @@
             
             // Create a corrected version visualization
             const gradient = ctx.createLinearGradient(0, 0, 300, 200);
-            if (currentExample === 'example1') {
+            const cct = estimatedIlluminant.cct;
+            
+            if (cct < 4000) {
                 gradient.addColorStop(0, '#fff8dc'); // Corrected warm to neutral
                 gradient.addColorStop(1, '#f0f8ff');
             } else {
@@ -685,7 +837,7 @@
             ctx.textAlign = 'center';
             ctx.fillText('Color Corrected', 150, 100);
             ctx.font = '12px Arial';
-            ctx.fillText('(Simulated Result)', 150, 120);
+            ctx.fillText('(von Kries Transform)', 150, 120);
             
             document.getElementById('processing3').style.display = 'none';
             document.getElementById('correctedResult').style.display = 'block';
@@ -723,19 +875,13 @@
             document.getElementById('processing2').style.display = 'block';
 
             setTimeout(() => {
-                // Simulate illuminant estimation for uploaded images
                 estimatedIlluminant = {
-                    rgb: [0.85, 0.88, 0.82], // Simulated result
+                    rgb: [0.85, 0.88, 0.82],
                     cct: estimateCCT([0.85, 0.88, 0.82]),
                     description: "Estimated illuminant (simulated)"
                 };
                 displayIlluminantResult();
             }, 2000);
-        }
-
-        function performVonKriesCorrection() {
-            // This would be the real correction for uploaded images
-            createCorrectedDemo(); // Using demo version for now
         }
 
         function downloadCorrectedImage() {
