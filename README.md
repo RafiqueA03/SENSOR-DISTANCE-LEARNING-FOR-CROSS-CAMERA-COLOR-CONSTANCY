@@ -39,7 +39,7 @@ Our work addresses the challenging problem of cross-camera color constancy using
 
 ## 📊 Results Preview
 
-Check out our [interactive visualization](https://icip25crosscameracolorconstancy.netlify.app/) to explore the results and compare ground truth vs predicted color constancy values across different camera sensors.
+Check out our [interactive visualization](https://icip25crosscameracolorconstancy.netlify.app/) to explore some of the results.
 
 <!-- ## Abstract
 
