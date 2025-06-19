@@ -791,6 +791,30 @@
             document.getElementById('correctedResult').style.display = 'none';
         }
 
+        // function displayIlluminantResult() {
+        //     document.getElementById('processing2').style.display = 'none';
+            
+        //     const illuminantSwatch = document.getElementById('illuminantSwatch');
+        //     const illuminantValues = document.getElementById('illuminantValues');
+        //     const illuminantDesc = document.getElementById('illuminantDesc');
+            
+        //     const rgbColor = `rgb(${Math.round(estimatedIlluminant.rgb[0] * 255)}, ${Math.round(estimatedIlluminant.rgb[1] * 255)}, ${Math.round(estimatedIlluminant.rgb[2] * 255)})`;
+        //     illuminantSwatch.style.backgroundColor = rgbColor;
+            
+        //     illuminantValues.innerHTML = `
+        //         RGB: (${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)})<br>
+        //         CCT: ${estimatedIlluminant.cct} K
+        //     `;
+            
+        //     illuminantDesc.textContent = estimatedIlluminant.description;
+            
+        //     document.getElementById('illuminantResult').style.display = 'block';
+            
+        //     setTimeout(() => {
+        //         applyVonKriesCorrection();
+        //     }, 1500);
+        // }
+
         function displayIlluminantResult() {
             document.getElementById('processing2').style.display = 'none';
             
@@ -798,15 +822,35 @@
             const illuminantValues = document.getElementById('illuminantValues');
             const illuminantDesc = document.getElementById('illuminantDesc');
             
-            const rgbColor = `rgb(${Math.round(estimatedIlluminant.rgb[0] * 255)}, ${Math.round(estimatedIlluminant.rgb[1] * 255)}, ${Math.round(estimatedIlluminant.rgb[2] * 255)})`;
-            illuminantSwatch.style.backgroundColor = rgbColor;
-            
-            illuminantValues.innerHTML = `
-                RGB: (${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)})<br>
-                CCT: ${estimatedIlluminant.cct} K
+            // Create neural network visualization
+            illuminantSwatch.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%;">
+                    <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                        <div style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.8;"></div>
+                        <div style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.6;"></div>
+                        <div style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.9;"></div>
+                    </div>
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <div style="width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.7;"></div>
+                        <div style="width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.9;"></div>
+                        <div style="width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.5;"></div>
+                        <div style="width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.8;"></div>
+                    </div>
+                    <div style="display: flex; gap: 4px;">
+                        <div style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.6;"></div>
+                        <div style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.8;"></div>
+                        <div style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.7;"></div>
+                    </div>
+                    <div style="color: white; font-size: 10px; margin-top: 6px; font-weight: bold;">CNN</div>
+                </div>
             `;
             
-            illuminantDesc.textContent = estimatedIlluminant.description;
+            illuminantValues.innerHTML = `
+                RGB: (${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)})
+            `;
+            
+            // Remove the description line since you want only RGB vector
+            illuminantDesc.style.display = 'none';
             
             document.getElementById('illuminantResult').style.display = 'block';
             
@@ -814,7 +858,6 @@
                 applyVonKriesCorrection();
             }, 1500);
         }
-
         function applyVonKriesCorrection() {
             document.getElementById('step3').classList.add('active');
             document.getElementById('processing3').style.display = 'block';
