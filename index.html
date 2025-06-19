@@ -876,12 +876,12 @@
             setTimeout(() => {
                 illuminantValues.style.transition = 'opacity 0.5s ease-in';
                 illuminantValues.style.opacity = '1';
-            }, 3000);
+            }, 4000);
             
             // Start color correction after RGB is shown (5 seconds total)
             setTimeout(() => {
                 applyVonKriesCorrection();
-            }, 5000);
+            }, 6000);
         }
         function applyVonKriesCorrection() {
             document.getElementById('step3').classList.add('active');
