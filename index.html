@@ -756,8 +756,14 @@
             `;
             
             illuminantValues.style.opacity = '0';
+            // illuminantValues.innerHTML = `
+            //     [r,g,b]: [${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)}]
+            // `;
             illuminantValues.innerHTML = `
                 [r,g,b]: [${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)}]
+                <div style="font-size: 0.8em; color: #666; margin-top: 8px; font-family: Arial, sans-serif;">
+                    where [r,g,b] is predicted light color from network
+                </div>
             `;
             
             document.getElementById('illuminantResult').style.display = 'block';
