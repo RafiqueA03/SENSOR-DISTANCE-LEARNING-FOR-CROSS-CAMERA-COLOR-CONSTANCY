@@ -757,7 +757,7 @@
             
             illuminantValues.style.opacity = '0';
             illuminantValues.innerHTML = `
-                rgb: [${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)}]
+                [r,g,b]: [${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)}]
             `;
             
             document.getElementById('illuminantResult').style.display = 'block';
