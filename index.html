@@ -482,8 +482,9 @@
                         <canvas id="correctedCanvas" class="demo-image"></canvas>
                         <div class="correction-info">
                             <strong>von Kries Chromatic Adaptation</strong><br>
-                            <code style="font-size: 1.1em; color: #1e40af;">I<sub>wb</sub> = I<sub>raw</sub> ⊙ [${estimatedIlluminant.rgb[0].toFixed(3)}, ${estimatedIlluminant.rgb[1].toFixed(3)}, ${estimatedIlluminant.rgb[2].toFixed(3)}]</code><br>
-                            <small>Diagonal transform applied to normalize illuminant</small>
+                            <code style="font-size: 1.1em; color: #1e40af;">I<sub>wb</sub> = I<sub>raw</sub> ⊙ [r,g,b]</code><br>
+                            <small> where:<small>
+                            </small> I<sub>wb</sub> is color corrected/white balanced image</small>
                         </div>
                         <button class="download-btn" id="downloadBtn">Download Corrected Image</button>
                     </div>
