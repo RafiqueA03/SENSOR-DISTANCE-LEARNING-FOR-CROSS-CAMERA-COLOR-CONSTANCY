@@ -483,8 +483,12 @@
                         <div class="correction-info">
                             <strong>von Kries Chromatic Adaptation</strong><br>
                             <code style="font-size: 1.1em; color: #1e40af;">I<sub>wb</sub> = I<sub>raw</sub> ⊙ [r,g,b]</code><br>
-                            <small> where:<small>
-                            </small> I<sub>wb</sub> is color corrected/white balanced image</small>
+                            <small>where:</small>
+                            <ul style="margin: 8px 0; padding-left: 20px; font-size: 0.85em;">
+                                <li>I<sub>wb</sub> is color corrected/white balanced image</li>
+                                <li>I<sub>raw</sub> is color biased/raw input image</li>
+                                <li>[r,g,b] is predicted light color from network</li>
+                            </ul>
                         </div>
                         <button class="download-btn" id="downloadBtn">Download Corrected Image</button>
                     </div>
