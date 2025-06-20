@@ -415,7 +415,7 @@
             <!-- Step 2: Log-Chroma Histogram -->
             <div class="step" id="step2">
                 <div class="step-number">2</div>
-                <div class="step-title">Log-Chroma Analysis</div>
+                <div class="step-title">Log-Chroma Histogram</div>
                 <div class="step-content">
                     <div class="processing" id="processing2">
                         <div class="spinner"></div>
@@ -427,10 +427,10 @@
                 </div>
             </div>
 
-            <!-- Step 3: Neural Network -->
+            <!-- Step 3: Color Contrastive Network -->
             <div class="step" id="step3">
                 <div class="step-number">3</div>
-                <div class="step-title">Neural Network</div>
+                <div class="step-title">Color Contrastive Network</div>
                 <div class="step-content">
                     <div class="processing" id="processing3">
                         <div class="spinner"></div>
@@ -478,7 +478,7 @@
                     <p>Convert RGB to log-chroma space and compute 128×128 histogram with UV coordinate channels for robust illuminant estimation.</p>
                 </div>
                 <div class="method-item">
-                    <h4>🔥 Contrastive Network</h4>
+                    <h4>🔥 Color Contrastive Network</h4>
                     <p>Multi-encoder convolutional cross-correlation network trained using our novel color metric and Siamese approach processes histograms to estimate illuminant UV coordinates.</p>
                 </div>
                 <div class="method-item">
@@ -764,8 +764,7 @@
                 <div style="width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 4px #10b981; animation: pulse 1s 1 alternate, glow 1s 1 alternate; animation-delay: 2.1s;"></div>
                 <div style="width: 7px; height: 7px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 4px #3b82f6; animation: pulse 1s 1 alternate, glow 1s 1 alternate; animation-delay: 2.2s;"></div>
             </div>
-                <div style="color: #94a3b8; font-size: 9px; margin-top: 4px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">CONTRASTIVE CNN</div>
-            </div>
+            // </div>
         `;
             
             illuminantValues.style.opacity = '0';
