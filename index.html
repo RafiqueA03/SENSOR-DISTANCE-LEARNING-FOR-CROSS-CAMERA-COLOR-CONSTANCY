@@ -166,8 +166,8 @@
 
         .workflow {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
             margin-bottom: 40px;
         }
 
@@ -431,8 +431,6 @@
                 3. Click download if you want to save the white balanced image<br>
             </div>
         </div>
-
-
         <div class="workflow">
             <!-- Step 1: Input Image -->
             <div class="step active" id="step1">
@@ -448,33 +446,44 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Step 2: Light Color Estimation -->
+        
+            <!-- Step 2: Log-Chroma Histogram -->
             <div class="step" id="step2">
                 <div class="step-number">2</div>
-                <div class="step-title">Light Color Estimation</div>
+                <div class="step-title">Log-Chroma Analysis</div>
                 <div class="step-content">
                     <div class="processing" id="processing2">
                         <div class="spinner"></div>
-                        <p>Analyzing image...</p>
+                        <p>Computing histogram...</p>
                     </div>
-                    <div class="illuminant-display" id="illuminantResult" style="display: none;">
-                        <div class="illuminant-swatch" id="illuminantSwatch"></div>
-                        <div class="illuminant-values" id="illuminantValues">
-                            RGB: (-, -, -)<br>
-                            CCT: - K
-                        </div>
-                        <div class="illuminant-description" id="illuminantDesc"></div>
+                    <div class="histogram-display" id="histogramResult" style="display: none;">
+                        <div class="histogram-visual" id="histogramVisual"></div>
                     </div>
                 </div>
             </div>
-
-            <!-- Step 3: Color Corrected -->
+        
+            <!-- Step 3: Neural Network -->
             <div class="step" id="step3">
                 <div class="step-number">3</div>
-                <div class="step-title">Color Correction: von Kries model</div>
+                <div class="step-title">Neural Network</div>
                 <div class="step-content">
                     <div class="processing" id="processing3">
+                        <div class="spinner"></div>
+                        <p>Analyzing histogram...</p>
+                    </div>
+                    <div class="illuminant-display" id="illuminantResult" style="display: none;">
+                        <div class="illuminant-swatch" id="illuminantSwatch"></div>
+                        <div class="illuminant-values" id="illuminantValues">RGB: (-, -, -)</div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Step 4: Color Correction -->
+            <div class="step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-title">von Kries Corrected</div>
+                <div class="step-content">
+                    <div class="processing" id="processing4">
                         <div class="spinner"></div>
                         <p>Applying correction...</p>
                     </div>
@@ -495,7 +504,6 @@
                 </div>
             </div>
         </div>
-
         <div class="method-section">
             <h3>🧠 Our Method</h3>
             <div class="method-grid">
