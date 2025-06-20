@@ -664,11 +664,11 @@
             setTimeout(() => {
                 document.getElementById('processing2').style.display = 'none';
                 document.getElementById('histogramVisual').innerHTML = `
-                    <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #3b82f6, #1e40af); border-radius: 10px; margin: 0 auto; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; padding: 10px;">
-                        ${Array.from({length: 64}, (_, i) => `<div style="background: rgba(255,255,255,${Math.random() * 0.8 + 0.2}); border-radius: 1px; animation: pulse ${1 + Math.random()}s 2 alternate; animation-delay: ${i * 0.02}s;"></div>`).join('')}
-                    </div>
-                    <div style="text-align: center; margin-top: 10px; font-size: 0.9em; color: #666;">128×128 Log-Chroma Histogram</div>
-                `;
+                <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #3b82f6, #1e40af); border-radius: 10px; margin: 0 auto; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; padding: 10px;">
+                    ${Array.from({length: 64}, (_, i) => `<div style="background: rgba(255,255,255,${Math.random() * 0.8 + 0.2}); border-radius: 1px; animation: pulse ${1 + Math.random()}s 1 alternate; animation-delay: ${i * 0.02}s;"></div>`).join('')}
+                </div>
+                <div style="text-align: center; margin-top: 10px; font-size: 0.9em; color: #666;">128×128 Log-Chroma Histogram</div>
+            `;
                 document.getElementById('histogramResult').style.display = 'block';
                 
                 setTimeout(() => {
