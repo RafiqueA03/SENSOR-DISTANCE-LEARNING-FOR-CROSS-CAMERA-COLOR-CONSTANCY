@@ -12,9 +12,9 @@
 
 ## 🎯 Overview
 
-This repository contains the implementation for our paper accepted at **IEEE International Conference on Image Processing (ICIP 2025)**.
+This repository for our paper accepted at **IEEE International Conference on Image Processing (ICIP 2025)**.
 
-Our work addresses the challenging problem of cross-camera color constancy using novel sensor distance learning techniques.
+Our work addresses the challenging problem of cross-camera color constancy using novel sensor distance learning technique.
 
 ## 📋 Paper Information
 
