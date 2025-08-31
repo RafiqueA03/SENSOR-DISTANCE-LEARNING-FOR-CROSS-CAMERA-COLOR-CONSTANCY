@@ -26,7 +26,7 @@ Our work addresses the challenging problem of cross-camera color constancy using
 
 | Resource | Status | Link |
 |----------|--------|------|
-| 📄 **Paper** | Coming Soon | - |
+| 📄 **Paper** | ✅ Available | [Read Paper](https://ieeexplore.ieee.org/document/11084287) |
 | 💻 **Code** | Coming Soon | - |
 | 🎨 **Interactive Visualization** | ✅ Available | [View Demo](https://icip25crosscameracolorconstancy.netlify.app/) |
 
